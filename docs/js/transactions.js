@@ -72,10 +72,10 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
     // sum buy/sell adk, create btc amount array
     if (buySellType === "buy") {
       txsAdkTotalBuy += amoutAdk;
-      btcAmountArray.push(dec4AmountBtc);
+      btcAmountArray.unshift(dec4AmountBtc);
     } else {
       txsAdkTotalSell += amoutAdk;
-      btcAmountArray.push(-1 * dec4AmountBtc);
+      btcAmountArray.unshift(-1 * dec4AmountBtc);
     }
   }
 
@@ -91,7 +91,7 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
         .append($('<td rowspan="2"></td>')
           .append($('<span id="graph-txs-sum"></span>'))
         )
-);
+  );
 
   $("#"+gaugeTableId).append(
       $("<tr></tr>")
