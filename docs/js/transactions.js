@@ -4,22 +4,24 @@ function splitBtcPrice(btcPrice) {
   var left = result[0];
   var right = btcPriceString.replace(left,"");
 
-  console.log(left + ":" + right);
-
   return {left: left, right: right};
 }
 
 // make table
-function makeTable(dataArray, tableId) {
+function makeTable(dataArray, rawTxTableId, gaugeTableId) {
 
   // header
-  $("#"+tableId).append(
+  $("#"+rawTxTableId).append(
       $("<tr></tr>")
           .append($("<td></td>").text("timestamp"))
           .append($("<td></td>").text("price"))
           .append($("<td></td>").text("ADK"))
           //.append($("<td></td>").text("BTC"))
   );
+
+  var txsAdkTotalBuy = 0
+  var txsAdkTotalSell = 0
+  var btcAmountArray = [];
 
   // data
   for (let data of dataArray) {
@@ -51,17 +53,72 @@ function makeTable(dataArray, tableId) {
       .append($('<span class="price-' + buySellType + '"></span>').text(spritPrice.right))
     ;
 
-    // calc btc amount
-    //var amountBtc = price * data["amount"];
 
-    $("#"+tableId).append(
+    // adk amount
+    var amoutAdk = data["amount"];
+
+    $("#"+rawTxTableId).append(
         $("<tr></tr>")
             .append($("<td></td>").text(ouputTimestamp))
             .append(priceTd)
-            .append($('<td class="price"></td>').text(data["amount"].toFixed(2)))
+            .append($('<td class="price"></td>').text(amoutAdk.toFixed(2)))
             //.append($('<td class="price"></td>').text(amountBtc.toFixed(8)))
     );
+
+    // calc btc amount
+    var amountBtc = price * amoutAdk;
+    var dec4AmountBtc = Number(amountBtc.toFixed(8))
+
+    // sum buy/sell adk, create btc amount array
+    if (buySellType === "buy") {
+      txsAdkTotalBuy += amoutAdk;
+      btcAmountArray.push(dec4AmountBtc);
+    } else {
+      txsAdkTotalSell += amoutAdk;
+      btcAmountArray.push(-1 * dec4AmountBtc);
+    }
   }
+
+  // gauge
+  $("#"+gaugeTableId).append(
+      $("<tr></tr>")
+        .append($('<td></td>')
+          .append($('<span class="price-sell"></span>').text("SELL"))
+        )
+        .append($('<td></td>')
+          .append($('<span class="price-buy"></span>').text("BUY"))
+        )
+        .append($('<td rowspan="2"></td>')
+          .append($('<span id="graph-txs-sum"></span>'))
+        )
+);
+
+  $("#"+gaugeTableId).append(
+      $("<tr></tr>")
+        .append($('<td></td>')
+          .append($('<span class="price-sell"></span>').text(txsAdkTotalSell.toFixed(1)))
+        )
+        .append($('<td></td>')
+          .append($('<span class="price-buy"></span>').text(txsAdkTotalBuy.toFixed(1)))
+        )
+  );
+
+  // txs sparkline
+  $("#sparkline").sparkline(btcAmountArray, {
+    type: 'bar',
+    height: '50',
+    barWidth: 3,
+    barColor: '#00ff7f',
+    negBarColor: '#dc143c'});
+
+  // buy/sell sparkline pie
+  $("#graph-txs-sum").sparkline([txsAdkTotalBuy, txsAdkTotalSell], {
+    type: 'pie',
+    width: '30',
+    height: '30',
+    sliceColors: ['#00ff7f','#dc143c'],
+    offset: -90});
+
 }
 
 function callMaketApi() {
@@ -77,7 +134,7 @@ function callMaketApi() {
     .then(json => {
       // mapping to table
       $("#updatedAt").text("Updated at " + moment().format());
-      makeTable(json.transactions.data,"table-transaction");
+      makeTable(json.transactions.data, "table-transaction", "table-tx-sell-buy-per");
       $("#message").text("");
     })
     .catch(error => console.log(error));
