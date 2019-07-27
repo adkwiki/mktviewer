@@ -7,7 +7,18 @@
     <style type="text/css">
       body {
         font-family:"ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
-        font-size:0.5em;
+        font-size:0.5rem;
+      }
+      table, td, th {
+        border-bottom: 1px solid #f5f5f5;
+        width: auto;
+      }
+      td, th {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      table {
+        border-collapse: collapse;
       }
       .price {
         text-align:right
@@ -15,22 +26,12 @@
       .price-left {color:#a9a9a9}
       .price-buy {color:#3cb371}
       .price-sell {color:#dc143c}
-      table, td, th {
-        border-bottom: 1px solid #f5f5f5;
-        width: auto;
-      }
-      td, th {
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-      }
-      table {
-        border-collapse: collapse;
-      }
+      .updated-at {font-size:xx-small;}
     </style>
 </head>
 <body>
   <div id="message">Now Loading...</div>
-  <div id="updatedAt"></div>
+  <div id="updatedAt" class="updated-at"></div>
 
   <div id="sparkline"></div>
   <div id="sparkline2"></div>
@@ -43,7 +44,15 @@
   <script src="./js/lib/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.js"></script>
   <script src="./js/lib/moment.js"></script>
-  <script src="./js/transactions.js?p=(new Date()).getTime()"></script>
+
+  <script>
+  var versioningNum = new Date().getTime()
+  var jsURL = './js/transactions.js?ver=' + versioningNum
+  var jsElement=document.createElement('script')
+  jsElement.setAttribute('src', jsURL)
+  document.getElementsByTagName("body")[0].appendChild(jsElement)
+  </script>
+
   <script type="text/javascript">
     window.onload = function(){
       callMaketApi();
