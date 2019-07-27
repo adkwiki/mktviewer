@@ -137,7 +137,7 @@ function callMaketApi() {
     })
     .then(json => {
       // mapping to table
-      $("#updatedAt").text("Updated at " + moment().format("YYYY/DD/DD HH:mm:ss"));
+      $("#updatedAt").text("Updated at " + moment().format("YYYY/MM/DD HH:mm:ss"));
       makeTable(json.transactions.data, "table-transaction", "table-tx-sell-buy-per");
       $("#message").text("");
     })
