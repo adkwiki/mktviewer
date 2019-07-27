@@ -79,6 +79,10 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
     }
   }
 
+  // floor
+  txsAdkTotalSell = Math.floor(txsAdkTotalSell);
+  txsAdkTotalBuy = Math.floor(txsAdkTotalBuy);
+
   // gauge
   $("#"+gaugeTableId).append(
       $("<tr></tr>")
@@ -96,10 +100,10 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
   $("#"+gaugeTableId).append(
       $("<tr></tr>")
         .append($('<td></td>')
-          .append($('<span class="price-sell"></span>').text(txsAdkTotalSell.toFixed(1)))
+          .append($('<span class="price-sell"></span>').text(txsAdkTotalSell))
         )
         .append($('<td></td>')
-          .append($('<span class="price-buy"></span>').text(txsAdkTotalBuy.toFixed(1)))
+          .append($('<span class="price-buy"></span>').text(txsAdkTotalBuy))
         )
   );
 
