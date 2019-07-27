@@ -112,15 +112,15 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
     type: 'bar',
     height: '50',
     barWidth: 2,
-    barColor: '#00ff7f',
-    negBarColor: '#dc143c'});
+    barColor: '#0FB387',
+    negBarColor: '#D9544F'});
 
   // buy/sell sparkline pie
   $("#graph-txs-sum").sparkline([txsAdkTotalBuy, txsAdkTotalSell], {
     type: 'pie',
     width: '30',
     height: '30',
-    sliceColors: ['#00ff7f','#dc143c'],
+    sliceColors: ['#0FB387','#D9544F'],
     offset: -90});
 
 }
