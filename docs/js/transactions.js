@@ -107,7 +107,7 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
   $("#sparkline").sparkline(btcAmountArray, {
     type: 'bar',
     height: '50',
-    barWidth: 3,
+    barWidth: 2,
     barColor: '#00ff7f',
     negBarColor: '#dc143c'});
 
