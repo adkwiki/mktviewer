@@ -87,10 +87,10 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
   $("#"+gaugeTableId).append(
       $("<tr></tr>")
         .append($('<td></td>')
-          .append($('<span class="price-sell"></span>').text("SELL"))
+          .append($('<span class="price-buy"></span>').text("BUY"))
         )
         .append($('<td></td>')
-          .append($('<span class="price-buy"></span>').text("BUY"))
+          .append($('<span class="price-buy"></span>').text(txsAdkTotalBuy))
         )
         .append($('<td rowspan="2"></td>')
           .append($('<span id="graph-txs-sum"></span>'))
@@ -100,10 +100,10 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
   $("#"+gaugeTableId).append(
       $("<tr></tr>")
         .append($('<td></td>')
-          .append($('<span class="price-sell"></span>').text(txsAdkTotalSell))
+          .append($('<span class="price-sell"></span>').text("SELL"))
         )
         .append($('<td></td>')
-          .append($('<span class="price-buy"></span>').text(txsAdkTotalBuy))
+          .append($('<span class="price-sell"></span>').text(txsAdkTotalSell))
         )
   );
 
