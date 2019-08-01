@@ -1,26 +1,8 @@
-function splitBtcPrice(btcPrice) {
-  var btcPriceString = btcPrice.toFixed(8);
-  var result = btcPriceString.match(/^[0|¥.]+/ );
-  var left = result[0];
-  var right = btcPriceString.replace(left,"");
-
-  return {left: left, right: right};
-}
-
 // make table
-function makeTable(dataArray, rawTxTableId, gaugeTableId) {
+function mapperTransactions(dataArray, rawTxTableId) {
 
-  // header
-  $("#"+rawTxTableId).append(
-      $("<tr></tr>")
-          .append($("<td></td>").text("timestamp"))
-          .append($("<td></td>").text("price"))
-          .append($("<td></td>").text("ADK"))
-          //.append($("<td></td>").text("BTC"))
-  );
-
-  var txsAdkTotalBuy = 0
-  var txsAdkTotalSell = 0
+  var txsBtcTotalBuy = 0
+  var txsBtcTotalSell = 0
   var btcAmountArray = [];
 
   // data
@@ -53,7 +35,6 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
       .append($('<span class="price-' + buySellType + '"></span>').text(spritPrice.right))
     ;
 
-
     // adk amount
     var amoutAdk = data["amount"];
 
@@ -62,7 +43,6 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
             .append($("<td></td>").text(ouputTimestamp))
             .append(priceTd)
             .append($('<td class="price"></td>').text(amoutAdk.toFixed(2)))
-            //.append($('<td class="price"></td>').text(amountBtc.toFixed(8)))
     );
 
     // calc btc amount
@@ -71,61 +51,39 @@ function makeTable(dataArray, rawTxTableId, gaugeTableId) {
 
     // sum buy/sell adk, create btc amount array
     if (buySellType === "buy") {
-      txsAdkTotalBuy += amoutAdk;
+      txsBtcTotalBuy += amountBtc;
       btcAmountArray.unshift(dec4AmountBtc);
     } else {
-      txsAdkTotalSell += amoutAdk;
+      txsBtcTotalSell += amountBtc;
       btcAmountArray.unshift(-1 * dec4AmountBtc);
     }
   }
 
   // floor
-  txsAdkTotalSell = Math.floor(txsAdkTotalSell);
-  txsAdkTotalBuy = Math.floor(txsAdkTotalBuy);
+  txsBtcTotalBuy = txsBtcTotalBuy.toFixed(2);
+  txsBtcTotalSell = txsBtcTotalSell.toFixed(2);
 
-  // gauge
-  $("#"+gaugeTableId).append(
-      $("<tr></tr>")
-        .append($('<td></td>')
-          .append($('<span class="price-buy"></span>').text("BUY"))
-        )
-        .append($('<td></td>')
-          .append($('<span class="price-buy"></span>').text(txsAdkTotalBuy))
-        )
-        .append($('<td rowspan="2"></td>')
-          .append($('<span id="graph-txs-sum"></span>'))
-        )
-  );
-
-  $("#"+gaugeTableId).append(
-      $("<tr></tr>")
-        .append($('<td></td>')
-          .append($('<span class="price-sell"></span>').text("SELL"))
-        )
-        .append($('<td></td>')
-          .append($('<span class="price-sell"></span>').text(txsAdkTotalSell))
-        )
-  );
+  $("#vol_buy_txs").text(txsBtcTotalBuy);
+  $("#vol_sell_txs").text(txsBtcTotalSell);
 
   // txs sparkline
-  $("#sparkline").sparkline(btcAmountArray, {
+  $("#txs_graph").sparkline(btcAmountArray, {
     type: 'bar',
     height: '50',
     barWidth: 2,
     barColor: '#0FB387',
     negBarColor: '#D9544F'});
 
-  // buy/sell sparkline pie
-  $("#graph-txs-sum").sparkline([txsAdkTotalBuy, txsAdkTotalSell], {
+  // buy/sell pie
+  $("#vol_graph_txs").sparkline([txsBtcTotalBuy, txsBtcTotalSell], {
     type: 'pie',
-    width: '30',
-    height: '30',
+    width: '20',
+    height: '20',
     sliceColors: ['#0FB387','#D9544F'],
     offset: -90});
-
 }
 
-function callMaketApi() {
+function callAidosMaketTransactionsApi() {
   fetch('https://aidosmarket.com/api/transactions?limit=50',
     { mode:"cors" })
     .then(response => {
@@ -136,10 +94,7 @@ function callMaketApi() {
       }
     })
     .then(json => {
-      // mapping to table
-      $("#updatedAt").text("Updated at " + moment().format("YYYY/MM/DD HH:mm:ss"));
-      makeTable(json.transactions.data, "table-transaction", "table-tx-sell-buy-per");
-      $("#message").text("");
+      mapperTransactions(json.transactions.data, "txs_list");
     })
     .catch(error => console.log(error));
 }

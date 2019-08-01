@@ -4,58 +4,316 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>AidosMarket Viewer</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+
     <style type="text/css">
+      /* TODO inline css to css file  */
       body {
         font-family:"ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
         font-size:0.5rem;
       }
-      table, td, th {
-        border-bottom: 1px solid #f5f5f5;
-        width: auto;
-      }
-      td, th {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-      }
-      table {
-        border-collapse: collapse;
-      }
       .price {
         text-align:right
       }
+      /* TODO rename class */
       .price-left {color:#a9a9a9}
       .price-buy {color:#0FB387}
       .price-sell {color:#D9544F}
-      .updated-at {font-size:xx-small;}
+      .table-wrapper-txs {
+        width: 100%;
+        height: 200px;
+        overflow: scroll;
+      }
+      td, th {
+        border-bottom: 1px solid #f5f5f5;
+      }
+      table {
+        table-layout: fixed;
+        width: 100%;
+      }
+      thead tr th {
+        position: sticky;
+        top: 0;
+        background-color: rgba(255,255,255,0.75);
+      }
+      tbody tr th {
+        position: sticky;
+        left: 0;
+      }
+      /* TODO rename id */
+      #chartdiv {
+        width: 100%;
+        height: 200px;
+      }
+      /* TODO rename class */
+      .xlarge-text {
+        font-size: x-large;
+      }
+      /* TODO rename class */
+      .medium-text {
+        font-size: medium;
+      }
+      .btn-group-xs > .btn, .btn-xs {
+        padding: .25rem .4rem;
+        font-size: .875rem;
+        line-height: .5;
+        border-radius: .2rem;
+      }
     </style>
 </head>
 <body>
-  <div id="message">Now Loading...</div>
-  <div id="updatedAt" class="updated-at"></div>
 
-  <div id="sparkline"></div>
-  <div id="sparkline2"></div>
-  </br>
+  <div class="container">
 
-  <table id="table-tx-sell-buy-per"></table>
-  </br>
-  <table id="table-transaction"></table>
+    <!-- infomation  -->
+    <div class="row">
+      <div id="infomation" class="col-12">
+        <!-- Error message, infomation(ex updatedAt)... -->
+      </div>
+    </div>
+
+    <!-- TODO padding method -->
+    <div class="row">
+      <div class="col-12 px-0">
+        <hr style="margin-top:2px; margin-bottom:5px;">
+      </div>
+    </div>
+
+    <!-- overview datasource : coinranking.com -->
+    <!-- https://api.coinranking.com/v1/public/coins?symbols=adk&base=btc -->
+    <div class="row">
+      <div class="col-12 px-1">
+        <img src="https://cdn.coinranking.com/Y9cyq8W3o/adk.svg" width="18" height="18"> <b>Overview</b>　<i>Powerd by <a href="https://coinranking.com/coin/aidoskuneen-adk" target="_blank">Coinranking</a></i>
+      </div>
+      <div class="col-5 px-2">
+        <span class="medium-text">
+          <span id="ov_price_left" class="price-left"></span><span id="ov_price_right"></span>
+        </span> <span id="ov_price_change"></span>
+      </div>
+
+      <div class="col-7">
+        <div class="row">
+          <div class="col-5 px-1">24h vol</div>
+          <div class="col-7 px-2 text-right">Ƀ <span id="ov_volume_24h"></span></div>
+
+          <div class="col-5 px-1">Market cap</div>
+          <div class="col-7 px-2 text-right">Ƀ <span id="ov_market_cap"></span> (Rank <span id="ov_rank"></span>)</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- stats + transactions -->
+
+    <!-- TODO padding method -->
+    <div class="row">
+      <div class="col-12 px-0">
+        <hr style="margin-top:2px; margin-bottom:5px;">
+      </div>
+    </div>
+
+    <div class="row">
+
+
+      <!-- stats 24h/1h vol -->
+      <div class="col-5">
+        <div class="row">
+          <div class="col-12 px-1">
+            <b>AidosMarket transactions</b>
+          </div>
+        </div>
+
+        <!-- current -->
+        <div class="row">
+          <div class="col-12 medium-text px-2">
+            <span id="last_price_left" class="price-left"></span><span id="last_price_right"></span>
+          </div>
+        </div>
+
+        <!-- 24h vol -->
+        <div class="row">
+          <div class="col-2 text-right px-1">24h</div>
+          <div class="col-7">
+            <div class="row">
+              <div class="col-5 px-1 price-buy">BUY</div>
+              <div id="vol_buy_24h" class="col-7 text-right px-1 price-buy"></div>
+            </div>
+            <div class="row">
+              <div class="col-5 px-1 price-sell">SELL</div>
+              <div id="vol_sell_24h" class="col-7 text-right px-1 price-sell"></div>
+            </div>
+          </div>
+          <div id="vol_graph_24h" class="col-3 p-1"></div>
+        </div>
+
+        <!-- 1h vol -->
+        <div class="row">
+          <div class="col-2 text-right px-1">1h</div>
+          <div class="col-7">
+            <div class="row">
+              <div class="col-5 px-1 price-buy">BUY</div>
+              <div id="vol_buy_1h" class="col-7 text-right px-1 price-buy"></div>
+            </div>
+            <div class="row">
+              <div class="col-5 px-1 price-sell">SELL</div>
+              <div id="vol_sell_1h" class="col-7 text-right px-1 price-sell"></div>
+            </div>
+          </div>
+          <div id="vol_graph_1h" class="col-3 p-1"><div id="vol_graph_1h_amc"></div></div>
+        </div>
+
+        <!-- 1h vol -->
+        <div class="row">
+          <div class="col-2 text-right px-1">50tx</div>
+          <div class="col-7">
+            <div class="row">
+              <div class="col-5 px-1 price-buy">BUY</div>
+              <div id="vol_buy_txs" class="col-7 text-right px-1 price-buy"></div>
+            </div>
+            <div class="row">
+              <div class="col-5 px-1 price-sell">SELL</div>
+              <div id="vol_sell_txs" class="col-7 text-right px-1 price-sell"></div>
+            </div>
+          </div>
+          <div id="vol_graph_txs" class="col-3 p-1"></div>
+        </div>
+
+        <!-- txs graph -->
+        <div class="row">
+          <div id="txs_graph" class="col-12 p-1"></div>
+        </div>
+
+      </div>
+
+      <!-- txs list -->
+      <div class="col-7 p-0 px-2">
+        <main class="table-wrapper-txs">
+          <table>
+            <thead>
+              <tr>
+                <th>timestamp</th>
+                <th>price</th>
+                <th>ADK</th>
+              </tr>
+            </thead>
+            <tbody id="txs_list"></tbody>
+          </table>
+        </main>
+      </div>
+
+    </div>
+
+    <!-- todo padding tag -->
+    <div class="row">
+      <div class="col-12 px-0">
+        <hr style="margin-top:2px; margin-bottom:5px;">
+      </div>
+    </div>
+
+    <!-- orderbook -->
+    <div class="row">
+      <div class="col-12 px-1">
+        <b>AidosMarket orderbook</b>
+      </div>
+
+      <!-- TODO implement orderbook scope setting -->
+      <!--
+      <div class="col-12 text-center p-2">
+        orderbook scope　
+        <div class="btn-group btn-group-xs" role="group" aria-label="">
+          <button type="button" class="btn btn-outline-secondary">_25_</button>
+          <button type="button" class="btn btn-outline-secondary">_50_</button>
+          <button type="button" class="btn btn-outline-secondary">_100_</button>
+        </div>
+        <div class="btn-group btn-group-xs" role="group" aria-label="Third group">
+          <button type="button" class="btn btn-outline-secondary">_ALL_</button>
+        </div>
+      </div>
+      -->
+    </div>
+
+
+    <!-- orderbook graph -->
+    <div class="row">
+      <div class="col-12 p-1">
+        <div id="chartdiv"></div>
+      </div>
+    </div>
+
+    <!-- orderbook : header -->
+    <div class="row">
+      <!-- bid BUY -->
+      <div id="ob_bid_list" class="col-6">
+
+        <!-- header -->
+        <div class="row">
+          <div class="col-2 px-1 price-buy">BUY</div>
+          <div class="col-10 px-1 text-right"><span id="ob_bid_adk"></span> ADK (Ƀ <span id="ob_bid_btc"></span>)</div>
+        </div>
+
+        <div class="row">
+          <div class="col-3 px-1">sum</div>
+          <div class="col-4 px-1">ADK</div>
+          <div class="col-5 px-1">price</div>
+        </div>
+
+      </div>
+
+      <!-- ask SELL -->
+      <div id="ob_ask_list" class="col-6">
+
+        <!-- header -->
+        <div class="row">
+          <div class="col-2 px-1 price-sell">SELL</div>
+          <div class="col-10 px-2 text-right"><span id="ob_ask_adk"></span> ADK (Ƀ <span id="ob_ask_btc"></span>)</div>
+        </div>
+
+        <div class="row">
+          <div class="col-5 px-1">price</div>
+          <div class="col-4 px-1">ADK</div>
+          <div class="col-3 px-2">sum</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
 
   <script src="./js/lib/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.js"></script>
+  <script src="./js/lib/jquery.sparkline.retina.js"></script>
   <script src="./js/lib/moment.js"></script>
+  <script src="https://www.amcharts.com/lib/4/core.js"></script>
+  <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+  <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
   <script>
-  var versioningNum = new Date().getTime()
-  var jsURL = './js/transactions.js?ver=' + versioningNum
-  var jsElement=document.createElement('script')
-  jsElement.setAttribute('src', jsURL)
-  document.getElementsByTagName("body")[0].appendChild(jsElement)
+  var scripts = [
+    "utils.js",
+    "transactions.js",
+    "overview.js",
+    "stats.js",
+    "orderbook.js"
+  ];
+  var versioningNum = new Date().getTime();
+
+  for (let script of scripts) {
+    var jsURL = './js/' + script + '?ver=' + versioningNum
+    var jsElement = document.createElement('script')
+    jsElement.setAttribute('src', jsURL)
+    document.getElementsByTagName("body")[0].appendChild(jsElement)
+  }
   </script>
 
   <script type="text/javascript">
     window.onload = function(){
-      callMaketApi();
+      $("#infomation").text("Now Loading...");
+      callCoinlibApi();
+      callAidosMarketStatsApi();
+      callAidosMaketTransactionsApi();
+      callAidosMarketOrderbookApi();
+      $("#infomation").text("Updated at " + moment().format("YYYY/MM/DD HH:mm:ss"));
     };
   </script>
 </body>
