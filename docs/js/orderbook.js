@@ -8,8 +8,8 @@ function mapperOrderbook(orderbook) {
   var bidTotalBtc = 0;
   var bidTotalAdk = 0;
 
-  let topBidPrice = bidArray[0].price;
-  let bidLimitPrice = topBidPrice / 10;
+  let headBidPrice = bidArray[0].price;
+  let bidLimitPrice = headBidPrice / 10;
 
   for (let bid of bidArray) {
     if (bid.price < bidLimitPrice) {
@@ -39,6 +39,8 @@ function mapperOrderbook(orderbook) {
     depthArray.unshift(depth);
   }
 
+  let bidCount = depthArray.length;
+
   $("#ob_bid_btc").text(bidTotalBtc.toFixed(0));
   $("#ob_bid_adk").text(bidTotalAdk.toFixed(0));
 
@@ -48,8 +50,8 @@ function mapperOrderbook(orderbook) {
   var askTotalBtc = 0;
   var askTotalAdk = 0;
 
-  let topAskPrice = askArray[0].price;
-  let askLimitPrice = topAskPrice * 10;
+  let headAskPrice = askArray[0].price;
+  let askLimitPrice = headAskPrice * 10;
 
   for (let ask of askArray) {
 
@@ -81,17 +83,18 @@ function mapperOrderbook(orderbook) {
     depthArray.push(depth);
   }
 
+  let askCount = depthArray.length - bidCount;
+
   $("#ob_ask_btc").text(askTotalBtc.toFixed(0));
   $("#ob_ask_adk").text(askTotalAdk.toFixed(0));
 
-
   // render buy/sell graphs
-  renderOrderbookGraph(depthArray);
+  renderOrderbookGraph(depthArray, bidCount, askCount);
 }
 
 // order book chart
 
-function renderOrderbookGraph(depthArray) {
+function renderOrderbookGraph(depthArray, bidCount, askCount) {
 
   // Themes begin
   am4core.useTheme(am4themes_animated);
@@ -110,10 +113,8 @@ function renderOrderbookGraph(depthArray) {
   xAxis.dataFields.category = "value";
   //xAxis.renderer.grid.template.location = 0;
   xAxis.renderer.minGridDistance = 50;
-  //xAxis.title.text = "Price (BTC/ETH)";
 
   var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
-  //yAxis.title.text = "Volume";
 
   // Create series
   var series = chart.series.push(new am4charts.StepLineSeries());
@@ -150,6 +151,18 @@ function renderOrderbookGraph(depthArray) {
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor();
+
+  // init zoom area
+  chart.events.on("datavalidated", function () {
+
+    let center = bidCount / (bidCount + askCount);
+
+    let startPos = center - (center * 0.2);
+    let endPos = center + (center * 0.2);
+
+    xAxis.zoom({start:startPos, end:endPos});
+  });
+
 }
 
 
