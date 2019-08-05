@@ -114,6 +114,9 @@ function renderOrderbookGraph(depthArray, bidCount, askCount) {
   //xAxis.renderer.grid.template.location = 0;
   xAxis.renderer.minGridDistance = 50;
 
+  xAxis.numberFormatter = new am4core.NumberFormatter();
+  xAxis.numberFormatter.numberFormat = "#.000000";
+
   var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
   // Create series
@@ -157,11 +160,23 @@ function renderOrderbookGraph(depthArray, bidCount, askCount) {
 
     let center = bidCount / (bidCount + askCount);
 
-    let startPos = center - (center * 0.2);
-    let endPos = center + (center * 0.2);
+    let startPos = center - (center * 0.1);
+    let endPos = center + (center * 0.1);
 
     xAxis.zoom({start:startPos, end:endPos});
   });
+
+  $('input[name="segmented"]:radio').change( function() {
+     var radioval = $(this).val();
+
+     let center = bidCount / (bidCount + askCount);
+
+     let startPos = center - (center * (radioval / 100));
+     let endPos = center + (center * (radioval / 100));
+
+     xAxis.zoom({start:startPos, end:endPos});
+  });
+
 
 }
 
