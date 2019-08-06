@@ -103,11 +103,6 @@
       }
       .segmented input[type="radio"] {
         display: none;
-        /*
-          appearance:none;
-          -webkit-appearance:none;
-          margin:0;
-          position: absolute;*/
       }
     </style>
 </head>
@@ -175,8 +170,10 @@
 
         <!-- current -->
         <div class="row">
-          <div class="col-12 medium-text px-2">
-            <span id="last_price_left" class="price-left"></span><span id="last_price_right"></span>
+          <div class="col-12 px-2">
+            <span class="medium-text">
+              <span id="last_price_left" class="price-left"></span><span id="last_price_right"></span>
+            </span> <span id="am_price_change"></span>
           </div>
         </div>
 
@@ -251,6 +248,11 @@
         </main>
       </div>
 
+    </div>
+
+    <!-- TODO chart 1h -->
+    <div class="row">
+      <div id="candlestick_chart" class="col-12 p-1"></div>
     </div>
 
     <!-- todo padding tag -->
@@ -343,7 +345,8 @@
     "transactions.js",
     "overview.js",
     "stats.js",
-    "orderbook.js"
+    "orderbook.js",
+    "chart.js"
   ];
   var versioningNum = new Date().getTime();
 
@@ -362,6 +365,7 @@
       callAidosMarketStatsApi();
       callAidosMaketTransactionsApi();
       callAidosMarketOrderbookApi();
+      callAidosMarketChartApi();
       $("#infomation").text("Updated at " + moment().format("YYYY/MM/DD HH:mm:ss"));
     };
 

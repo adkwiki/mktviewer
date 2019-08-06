@@ -102,7 +102,6 @@ function renderOrderbookGraph(depthArray, bidCount, askCount) {
 
   // Create chart instance
   var chart = am4core.create("chartdiv", am4charts.XYChart);
-
   chart.data = depthArray;
 
   // Set up precision for numbers
@@ -118,6 +117,7 @@ function renderOrderbookGraph(depthArray, bidCount, askCount) {
   xAxis.numberFormatter.numberFormat = "#.000000";
 
   var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  yAxis.renderer.minGridDistance = 20;
 
   // Create series
   var series = chart.series.push(new am4charts.StepLineSeries());

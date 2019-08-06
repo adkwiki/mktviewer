@@ -1,6 +1,8 @@
 function mapperStats(stats) {
 
-  let last_price = splitBtcPrice(stats["last_price"]);
+  var last_price = splitBtcPrice(stats["last_price"]);
+  setAmLastPrice(stats["last_price"]);
+
   $("#last_price_left").text(last_price.left);
   $("#last_price_right").text(last_price.right);
 
@@ -47,6 +49,7 @@ function callAidosMarketStatsApi() {
     })
     .then(json => {
       mapperStats(json.stats);
+      mapperAmChangePer();
     })
     .catch(error => console.log(error));
 }
