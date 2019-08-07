@@ -32,13 +32,25 @@ function mapperChart(candles) {
   dateAxis.dateFormats.setKey("hour", "HH:00");
   dateAxis.periodChangeDateFormats.setKey("hour", "HH:00\nMM/dd");
 
-  var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-  valueAxis.tooltip.disabled = true;
-  valueAxis.renderer.minGridDistance = 10;
+  var valueColumnAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  valueColumnAxis.tooltip.disabled = true;
+  valueColumnAxis.renderer.grid.template.disabled = true;
+  valueColumnAxis.renderer.labels.template.disabled = true;
+  valueColumnAxis.extraMax = 2;
+  valueColumnAxis.fillOpacity = 0.5;
 
-  valueAxis.numberFormatter.numberFormat = "#.00000";
+  var columnSeries = chart.series.push(new am4charts.ColumnSeries());
+  columnSeries.yAxis = valueColumnAxis;
+  columnSeries.dataFields.valueY = "volume";
+  columnSeries.dataFields.dateX = "date";
+
+  var valueCalndleAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  valueCalndleAxis.tooltip.disabled = true;
+  valueCalndleAxis.renderer.minGridDistance = 10;
+  valueCalndleAxis.numberFormatter.numberFormat = "#.00000";
 
   var series = chart.series.push(new am4charts.CandlestickSeries());
+  series.yAxis = valueCalndleAxis;
   series.dataFields.dateX = "date";
   series.dataFields.valueY = "close";
   series.dataFields.openValueY = "open";
@@ -55,6 +67,7 @@ function mapperChart(candles) {
 
   series.riseFromPreviousState.properties.fillOpacity = 1;
   series.dropFromPreviousState.properties.fillOpacity = 0;
+
 
   chart.data = candles;
 }
