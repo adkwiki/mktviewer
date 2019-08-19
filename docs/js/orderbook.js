@@ -114,7 +114,7 @@ function renderOrderbookGraph(depthArray, bidCount, askCount) {
   xAxis.renderer.minGridDistance = 50;
 
   xAxis.numberFormatter = new am4core.NumberFormatter();
-  xAxis.numberFormatter.numberFormat = "#.000000";
+  xAxis.numberFormatter.numberFormat = "[font-size: 0.5rem]#.000000";
 
   var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
   yAxis.renderer.minGridDistance = 20;
