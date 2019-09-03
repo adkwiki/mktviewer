@@ -1,3 +1,5 @@
+const LIMIT_RANGE = 20;
+
 function mapperOrderbook(orderbook) {
   // TODO refactor bid/ask code duplication
 
@@ -9,7 +11,7 @@ function mapperOrderbook(orderbook) {
   var bidTotalAdk = 0;
 
   let headBidPrice = bidArray[0].price;
-  let bidLimitPrice = headBidPrice / 10;
+  let bidLimitPrice = headBidPrice / LIMIT_RANGE;
 
   for (let bid of bidArray) {
     if (bid.price < bidLimitPrice) {
@@ -25,7 +27,7 @@ function mapperOrderbook(orderbook) {
     ;
 
     $("#ob_bid_list").append(
-        $('<div class="row"></div>')
+        $('<div class="row order"></div>')
           .append($('<div class="col-3 px-1 text-right"></div>').text(bidTotalBtc.toFixed(1)))
           .append($('<div class="col-4 px-1 text-right"></div>').text(bid.order_amount.toFixed(2)))
           .append(priceDiv)
@@ -51,7 +53,7 @@ function mapperOrderbook(orderbook) {
   var askTotalAdk = 0;
 
   let headAskPrice = askArray[0].price;
-  let askLimitPrice = headAskPrice * 10;
+  let askLimitPrice = headAskPrice * LIMIT_RANGE;
 
   for (let ask of askArray) {
 
@@ -69,7 +71,7 @@ function mapperOrderbook(orderbook) {
     ;
 
     $("#ob_ask_list").append(
-        $('<div class="row"></div>')
+        $('<div class="row order"></div>')
           .append(priceDiv)
           .append($('<div class="col-4 px-1 text-right"></div>').text(ask.order_amount.toFixed(2)))
           .append($('<div class="col-3 px-2 text-right"></div>').text(askTotalBtc.toFixed(1)))

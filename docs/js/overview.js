@@ -1,13 +1,11 @@
-function mapperOverview(coinlib_coin) {
+function mapperOverview(coin) {
 
-  let spirt_price = splitBtcPrice(parseFloat(coinlib_coin["price"]));
-
-  console.log(spirt_price);
+  let spirt_price = splitBtcPrice(parseFloat(coin["price"]));
 
   $("#ov_price_left").text(spirt_price.left);
   $("#ov_price_right").text(spirt_price.right);
 
-  let change = coinlib_coin["change"].toFixed(1);
+  let change = coin["change"].toFixed(1);
   $("#ov_price_change").text(change + "%");
   if (change > 0) {
     $("#ov_price_change").attr("class","price-buy");
@@ -15,10 +13,10 @@ function mapperOverview(coinlib_coin) {
     $("#ov_price_change").attr("class","price-sell");
   }
 
-  $("#ov_volume_24h").text(coinlib_coin["volume"].toFixed(2));
+  $("#ov_volume_24h").text(coin["volume"].toFixed(2));
 
-  $("#ov_market_cap").text(coinlib_coin["marketCap"].toFixed(2));
-  $("#ov_rank").text(coinlib_coin["rank"]);
+  $("#ov_market_cap").text(coin["marketCap"].toFixed(2));
+  $("#ov_rank").text(coin["rank"]);
 }
 
 function callCoinlibApi() {

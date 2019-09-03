@@ -27,8 +27,6 @@ function setAmLastPrice(price) {
 
 function mapperAmChangePer() {
 
-  console.log(am_before_24h_price + ":" + am_last_price);
-
   if (am_before_24h_price === undefined || am_last_price === undefined) {
     return;
   }
@@ -37,15 +35,17 @@ function mapperAmChangePer() {
   var change = 0;
   if (am_before_24h_price < am_last_price) {
     // rise
-    change = (am_last_price - am_before_24h_price) / am_before_24h_price * 100
+    change = (am_last_price - am_before_24h_price) / am_before_24h_price * 100;
+    change = `+${change.toFixed(1)}%`;
     $("#am_price_change").attr("class","price-buy");
 
   } else if (am_before_24h_price > am_last_price) {
     // drop
-    change = (am_last_price - am_before_24h_price) / am_before_24h_price * 100 * -1
+    change = (am_last_price - am_before_24h_price) / am_before_24h_price * 100 * -1;
+    change = `${change.toFixed(1)}%`;
     $("#am_price_change").attr("class","price-sell");
   }
 
-  $("#am_price_change").text(change.toFixed(1) + "%");
+  $("#am_price_change").text(change);
 
 }
