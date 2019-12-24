@@ -5,8 +5,32 @@ function mapperOrderbook(orderbook) {
 
   var depthArray = [];
 
-  // bid
   let bidArray = orderbook["bid"];
+  let askArray = orderbook["ask"];
+
+  // ignore bloken order
+  let isBlokenBidSide = false;
+  while (bidArray[0].order_amount < 0) {
+    bidArray.shift();
+    isBlokenBidSide = true;
+  }
+
+  let isBlokenAskSide = false;
+  while (askArray[0].order_amount < 0) {
+    askArray.shift();
+    isBlokenAskSide = true;
+  }
+
+  while (askArray[0].price < bidArray[0].price) {
+    if (isBlokenBidSide) {
+      bidArray.shift();
+    }
+    if (isBlokenAskSide) {
+      askArray.shift();
+    }
+  }
+
+  // bid
   var bidTotalBtc = 0;
   var bidTotalAdk = 0;
 
@@ -48,7 +72,6 @@ function mapperOrderbook(orderbook) {
 
 
   // ask
-  let askArray = orderbook["ask"];
   var askTotalBtc = 0;
   var askTotalAdk = 0;
 
@@ -56,7 +79,6 @@ function mapperOrderbook(orderbook) {
   let askLimitPrice = headAskPrice * LIMIT_RANGE;
 
   for (let ask of askArray) {
-
     if (ask.price > askLimitPrice) {
       break;
     }
