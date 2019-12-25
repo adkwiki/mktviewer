@@ -21,7 +21,7 @@ function mapperOrderbook(orderbook) {
     isBlokenAskSide = true;
   }
 
-  while (askArray[0].price < bidArray[0].price) {
+  while (askArray[0].price <= bidArray[0].price) {
     if (isBlokenBidSide) {
       bidArray.shift();
     }
